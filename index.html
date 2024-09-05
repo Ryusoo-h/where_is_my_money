@@ -5,9 +5,105 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./style.css" />
     <title>WIMM</title>
 </head>
 <body>
+    <header class="basic-layout">
+        <div class="content">
+            <h1 class="main-title">WIMM</h1>
+            <p class="main-title-description">Where Is My Monny</p></div>
+        <div class="line">
+            <div class="white"></div>
+        </div>
+    </header>
+    <section id="list"></section>
+    <script>
+        const spreadsheetId = '1EdiKRryrgJpXInel87fNZQen0fATZy_3Z1Cw-R8M4T4';
+        const sheetName = '2024-09';
+        const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+        let spreadsheets;
 
+        // 리스트를 출력할 DOM
+        const listDOM = document.getElementById('list');
+
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                // 1. JSON 형식으로 변환
+                const jsonData = JSON.parse(data.substr(47).slice(0, -2));
+
+                // 2. 사용하기 편한 형태로 변환
+                // {
+                //     '날짜': {
+                //         date: number;
+                //         month: number;
+                //         year: number;
+                //     },
+                //     '분류': '고정지출' | '저축' | '식비' | '건강' | '여가' | '과소비';
+                //     '상세': string;
+                //     '금액': number;
+                // }[]
+                spreadsheets = jsonData.table.rows;
+                spreadsheets = spreadsheets.map(v => {
+                    const keys = ['날짜', '분류', '상세', '금액'];
+                    const values = v.c;
+                    let row = {};
+
+                    for (let i = 0; i < keys.length; i++) {
+                        if (i === 0) {
+                            const [year, month, date] = values[i].v.slice(5, -1).split(',').map(v => Number(v));
+                            row[keys[i]] = {year, month, date};
+                        } else {
+                            row[keys[i]] = values[i].v;
+                        }
+                    }
+                    return row;
+                })
+                console.log(spreadsheets);
+
+                // 3. DOM에 넣기 위해 가공
+                const getList = (date, category, detail, price) => {
+                    const dateSpan = `<span class="date">${date}</span>`;
+                    const categorySpan = `<span class="category">${category}</span>`;
+                    const detailSpan = `<span class="detail">${detail}</span>`;
+                    const priceSpan = `<span class="price">${price}</span>`;
+                    let listClassName = '';
+
+                    // less 적을수록 좋은 것
+                    // good 원하는만큼 할 것
+                    // fit 적당히 할 것
+                    switch(category) {
+                        case '고정지출':
+                            listClassName = 'less1'
+                            break;
+                        case '저축':
+                            listClassName = 'good1'
+                            break;
+                        case '건강':
+                            listClassName = 'good2'
+                            break;
+                        case '식비':
+                            listClassName = 'fit1'
+                            break;
+                        case '여가':
+                            listClassName = 'fit2'
+                            break;
+                        case '과소비':
+                            listClassName = 'less2'
+                            break;
+                        default:
+                            listClassName = 'basic'
+                    }
+
+                    return `<li class='${listClassName}'>${dateSpan}${categorySpan}${detailSpan}${priceSpan}</li>`
+                };
+                const list = spreadsheets.reverse().map(v => getList(v['날짜'].date, v['분류'], v['상세'], v['금액'] ))
+                console.log(list);
+                listDOM.innerHTML = `<ul>${list.join('')}</ul>`
+
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
 </body>
 </html>

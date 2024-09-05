@@ -1,0 +1,87 @@
+/* 느림보 고딕 */
+@font-face {
+    font-family: 'neurimboGothicRegular';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/neurimboGothicRegular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* 프리텐다드 */
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+:root {
+    font-family: 'Pretendard-Regular';
+    font-size: 16px;
+}
+body {
+    max-width: 360px;
+    margin: 0 auto;
+    border: solid 1px #ddd;
+}
+
+.basic-layout {
+    display: flex;
+    margin-right: 20px;
+    .content {
+        width: 100%;
+    }
+    .line {
+        flex-shrink: 0;
+        width: 14px;
+        background-color: #000;
+    }
+}
+
+header {
+    height: 140px;
+    text-align: right;
+    .main-title {
+        font-family: 'neurimboGothicRegular';
+        font-size: 96px;
+        line-height: 96px;
+        margin: 0;
+        transform: translateX(18px);
+    }
+    .main-title-description {
+        font-family: 'neurimboGothicRegular';
+        line-height: 16px;
+        opacity: 10%;
+        letter-spacing: 0.4em;
+        margin: 0;
+    }
+    .line {
+        .white {
+            height: 37px;
+            background-color: #fff;
+        }
+    }
+}
+
+.basic {
+    color: #000;
+}
+.good1 {
+    color: #00c2a0;
+}
+.good2 {
+    color: #0CCF43;
+}
+.less1 {
+    color: #858585;
+}
+.less2 {
+    color: #FFB800;
+}
+.fit1 {
+    color: #000;
+}
+.fit2 {
+    color: #0CCF43;
+}
+
+
