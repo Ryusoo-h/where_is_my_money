@@ -98,7 +98,7 @@
                 const formatForPrice = (price) => price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 
 
-                // return: 통계 컴포넌트
+                // return: 통계 컴포넌트, 통계 비율
                 const getStatus = () => {
                     let total = {
                         ['고정지출'] : 0,
@@ -133,6 +133,8 @@
                                 console.debug('분류가 지정되지 않은 소비가 있습니다')
                         }
                     })
+
+                    // content 영역 컴포넌트
                     const 고정지출 = `<div class='${getColorClassName('고정지출')} each total'><h3>고정지출</h3><span>${formatForPrice(total['고정지출'])}원</span></div>`
                     const 저축 = `<div class='${getColorClassName('저축')} each total'><h3>저축</h3><span>${formatForPrice(total['저축'])}원</span></div>`
                     const 건강 = `<div class='${getColorClassName('건강')} each total'><h3>건강</h3><span>${formatForPrice(total['건강'])}원</span></div>`
@@ -141,10 +143,23 @@
                     const 플렉스 = `<div class='${getColorClassName('플렉스')} each total'><h3>플렉스</h3><span>${formatForPrice(total['플렉스'])}원</span></div>`
 
                     const 지출통계 = 고정지출 + 저축 + 건강 + 식비 + 여가 + 플렉스;
+                    const 총금액 = Object.values(total).reduce((addedTotal, value) => addedTotal + value, 0)
 
-                    const monthTitle = `<div class="title-wrapper total"><h2>${spreadsheets[0]['날짜'].month + 1}</h2><span>${formatForPrice(Object.values(total).reduce((addedTotal, value) => addedTotal + value, 0))}원</span></div>`
+                    const monthTitle = `<div class="title-wrapper total"><h2>${spreadsheets[0]['날짜'].month + 1}</h2><span>${formatForPrice(총금액)}원</span></div>`
 
-                    return `<div class="total-wrapper content">${monthTitle}${지출통계}</div>`
+                    // line 영역 컴포넌트
+                    const 고정지출Graph = `<div class='${getColorClassName('고정지출')} graph'></div>`
+                    const 저축Graph = `<div class='${getColorClassName('저축')} graph'></div>`
+                    const 건강Graph = `<div class='${getColorClassName('건강')} graph'></div>`
+                    const 식비Graph = `<div class='${getColorClassName('식비')} graph'></div>`
+                    const 여가Graph = `<div class='${getColorClassName('여가')} graph'></div>`
+                    const 플렉스Graph = `<div class='${getColorClassName('플렉스')} graph'></div>`
+
+                    const 그래프 = 고정지출Graph + 저축Graph + 건강Graph + 식비Graph + 여가Graph + 플렉스Graph
+
+                    const totalRatio = Object.values(total).map(v => Math.round((v/총금액) * 100))
+
+                    return [`<div class="total-wrapper content">${monthTitle}${지출통계}</div><div class="line">${그래프}</div>`, totalRatio]
                 }
 
                 // return: 리스트 컴포넌트
@@ -167,9 +182,18 @@
                 }
 
                 // 4. DOM에 추가
-                listDOM.innerHTML = `<section class="consumption-statistics basic-layout">${getStatus()}<div class="line"></div></section>`
+                const [listStatus, totalRatio] = getStatus();
+
+                listDOM.innerHTML = `<section class="consumption-statistics basic-layout">${listStatus}</section>`
                     + `<section class="consumption-list basic-layout"><ul class="content monthly-list">${getList()}</ul><div class="line"></div></section>`
 
+
+                // 5. 그래프 비율 적용
+                const graphLine = document.querySelectorAll('.consumption-statistics .line > div');
+                graphLine.forEach((v, i) => {
+                    v.style.height = `${(250/100) * totalRatio[i]}px`
+                })
+                console.debug(graphLine)
             })
             .catch(error => console.error('Error fetching data:', error));
     </script>

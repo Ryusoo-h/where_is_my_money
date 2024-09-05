@@ -109,6 +109,27 @@ header {
     }
     .line {
         background-color: #fff;
+        .basic {
+            background-color: #fff;
+        }
+        .good1 {
+            background-color: #009086;
+        }
+        .good2 {
+            background-color: #0CCF43;
+        }
+        .less1 {
+            background-color: #777;
+        }
+        .less2 {
+            background-color: #FFB800;
+        }
+        .fit1 {
+            background-color: #fff;
+        }
+        .fit2 {
+            background-color: #FF4C97;
+        }
     }
     .fit1 {
         color: #fff;
@@ -167,7 +188,7 @@ header {
     color: #0CCF43;
 }
 .less1 {
-    color: #858585;
+    color: #777;
 }
 .less2 {
     color: #FFB800;
