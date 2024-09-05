@@ -12,7 +12,14 @@
     <header class="basic-layout">
         <div class="content">
             <h1 class="main-title">WIMM</h1>
-            <p class="main-title-description">Where Is My Monny</p></div>
+            <p class="main-title-description">
+                Where Is My Monny
+            </p>
+            <p class="sub-description">
+               105 + 💸 =
+                <br/>50 + 25 + 💪 + 30 + 💗 + 💰
+            </p>
+        </div>
         <div class="line">
             <div class="white"></div>
         </div>
@@ -40,7 +47,7 @@
                 //         month: number;
                 //         year: number;
                 //     },
-                //     '분류': '고정지출' | '저축' | '식비' | '건강' | '여가' | '과소비';
+                //     '분류': '고정지출' | '저축' | '식비' | '건강' | '여가' | '플렉스';
                 //     '상세': string;
                 //     '금액': number;
                 // }[]
@@ -63,44 +70,105 @@
                 console.log(spreadsheets);
 
                 // 3. DOM에 넣기 위해 가공
-                const getList = (date, category, detail, price) => {
-                    const dateSpan = `<span class="date">${date}</span>`;
-                    const categorySpan = `<span class="category">${category}</span>`;
-                    const detailSpan = `<span class="detail">${detail}</span>`;
-                    const priceSpan = `<span class="price">${price}</span>`;
-                    let listClassName = '';
 
+                // util function: category에 따라 색상 클래스 이름을 return 함
+                const getColorClassName = (category) => {
                     // less 적을수록 좋은 것
                     // good 원하는만큼 할 것
                     // fit 적당히 할 것
                     switch(category) {
                         case '고정지출':
-                            listClassName = 'less1'
-                            break;
+                            return 'less1'
                         case '저축':
-                            listClassName = 'good1'
-                            break;
+                            return 'good1'
                         case '건강':
-                            listClassName = 'good2'
-                            break;
+                            return 'good2'
                         case '식비':
-                            listClassName = 'fit1'
-                            break;
+                            return 'fit1'
                         case '여가':
-                            listClassName = 'fit2'
-                            break;
-                        case '과소비':
-                            listClassName = 'less2'
-                            break;
+                            return 'fit2'
+                        case '플렉스':
+                            return 'less2'
                         default:
-                            listClassName = 'basic'
+                            return 'basic'
+                    }
+                }
+
+                // util function: price에 ,를 추가해서 return 함
+                const formatForPrice = (price) => price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
+
+                // return: 통계 컴포넌트
+                const getStatus = () => {
+                    let total = {
+                        ['고정지출'] : 0,
+                        ['저축'] : 0,
+                        ['건강'] : 0,
+                        ['식비'] : 0,
+                        ['여가'] : 0,
+                        ['플렉스'] : 0,
                     }
 
-                    return `<li class='${listClassName}'>${dateSpan}${categorySpan}${detailSpan}${priceSpan}</li>`
-                };
-                const list = spreadsheets.reverse().map(v => getList(v['날짜'].date, v['분류'], v['상세'], v['금액'] ))
-                console.log(list);
-                listDOM.innerHTML = `<ul>${list.join('')}</ul>`
+                    spreadsheets.forEach(v => {
+                        switch(v['분류']) {
+                            case '고정지출':
+                                total['고정지출'] += v['금액'];
+                                break;
+                            case '저축':
+                                total['저축'] += v['금액'];
+                                break;
+                            case '건강':
+                                total['건강'] += v['금액'];
+                                break;
+                            case '식비':
+                                total['식비'] += v['금액'];
+                                break;
+                            case '여가':
+                                total['여가'] += v['금액'];
+                                break;
+                            case '플렉스':
+                                total['플렉스'] += v['금액'];
+                                break;
+                            default:
+                                console.debug('분류가 지정되지 않은 소비가 있습니다')
+                        }
+                    })
+                    const 고정지출 = `<div class='${getColorClassName('고정지출')} each total'><h3>고정지출</h3><span>${formatForPrice(total['고정지출'])}원</span></div>`
+                    const 저축 = `<div class='${getColorClassName('저축')} each total'><h3>저축</h3><span>${formatForPrice(total['저축'])}원</span></div>`
+                    const 건강 = `<div class='${getColorClassName('건강')} each total'><h3>건강</h3><span>${formatForPrice(total['건강'])}원</span></div>`
+                    const 식비 = `<div class='${getColorClassName('식비')} each total'><h3>식비</h3><span>${formatForPrice(total['식비'])}원</span></div>`
+                    const 여가 = `<div class='${getColorClassName('여가')} each total'><h3>여가</h3><span>${formatForPrice(total['여가'])}원</span></div>`
+                    const 플렉스 = `<div class='${getColorClassName('플렉스')} each total'><h3>플렉스</h3><span>${formatForPrice(total['플렉스'])}원</span></div>`
+
+                    const 지출통계 = 고정지출 + 저축 + 건강 + 식비 + 여가 + 플렉스;
+
+                    const monthTitle = `<div class="title-wrapper total"><h2>${spreadsheets[0]['날짜'].month + 1}</h2><span>${formatForPrice(Object.values(total).reduce((addedTotal, value) => addedTotal + value, 0))}원</span></div>`
+
+                    return `<div class="total-wrapper content">${monthTitle}${지출통계}</div>`
+                }
+
+                // return: 리스트 컴포넌트
+                const getList = () => {
+                    let prevDate = 0 // 이전 날짜와 다르면 날짜를 숨기지 않도록 하기위해 변수 필요.
+                    const getListLI = (date, category, detail, price) => {
+                        const day = new Date(spreadsheets[0]['날짜'].year, spreadsheets[0]['날짜'].month, date).getDay()
+                        const dateSpan = `<span class="date ${day === 0 ? 'sun' : ''} ${day === 6 ? 'set' : ''}">${date}</span>`;
+                        const detailSpan = `<span class="detail">${detail}</span>`;
+                        const priceSpan = `<span class="price">${formatForPrice(price)}</span>`;
+                        let listClassName = '';
+
+                        const isSameDate = prevDate == date;
+                        if (!isSameDate) {
+                            prevDate = date;
+                        }
+                        return `<li class='${getColorClassName(category)} ${isSameDate ? 'hidden-date' : ''}'>${dateSpan}${detailSpan}${priceSpan}</li>`
+                    };
+                    return spreadsheets.reverse().map(v => getListLI(v['날짜'].date, v['분류'], v['상세'], v['금액'] )).join('')
+                }
+
+                // 4. DOM에 추가
+                listDOM.innerHTML = `<section class="consumption-statistics basic-layout">${getStatus()}<div class="line"></div></section>`
+                    + `<section class="consumption-list basic-layout"><ul class="content monthly-list">${getList()}</ul><div class="line"></div></section>`
 
             })
             .catch(error => console.error('Error fetching data:', error));

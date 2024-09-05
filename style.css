@@ -19,14 +19,18 @@
     font-size: 16px;
 }
 body {
-    max-width: 360px;
+    max-width: 420px;
     margin: 0 auto;
-    border: solid 1px #ddd;
+}
+
+header, section, div {
+    box-sizing: border-box;
 }
 
 .basic-layout {
+    width: 100%;
     display: flex;
-    margin-right: 20px;
+    padding-right: 20px;
     .content {
         width: 100%;
     }
@@ -38,7 +42,7 @@ body {
 }
 
 header {
-    height: 140px;
+    height: 170px;
     text-align: right;
     .main-title {
         font-family: 'neurimboGothicRegular';
@@ -50,9 +54,19 @@ header {
     .main-title-description {
         font-family: 'neurimboGothicRegular';
         line-height: 16px;
-        opacity: 10%;
+        color: #ddd;
         letter-spacing: 0.4em;
         margin: 0;
+        span {
+            letter-spacing: 0em;
+            line-height: 24px;
+        }
+    }
+    .sub-description {
+        margin: 0 4px  0;
+        font-family: 'neurimboGothicRegular';
+        line-height: 24px;
+        color: #ddd;
     }
     .line {
         .white {
@@ -62,11 +76,92 @@ header {
     }
 }
 
+/* 통계 컴포넌트 */
+.consumption-statistics {
+    height: 250px;
+    background-color: #000;
+    color: #fff;
+    .total {
+        padding: 0 20px;
+    }
+    .title-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 40px;
+        font-family: 'neurimboGothicRegular';
+        h2 {
+            margin: 10px 0 0;
+            font-size: 40px;
+            font-weight: 400;
+        }
+    }
+    .each {
+        margin-left: 35%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: 'neurimboGothicRegular';
+        h3 {
+            margin: 3px 0;
+            font-weight: 400;
+        }
+    }
+    .line {
+        background-color: #fff;
+    }
+    .fit1 {
+        color: #fff;
+    }
+}
+.total-wrapper {
+    width: 100%;
+    .title-wrapper {
+
+    }
+
+}
+
+/* 리스트 컴포넌트 */
+.monthly-list {
+    margin: 10px 0;
+    list-style: none;
+    padding: 0;
+    li {
+        display: flex;
+        padding: 5px 10px;
+        gap: 10px;
+        .date {
+            flex-shrink: 0;
+            width: 30px;
+            color: #000;
+        }
+        .date.sun {
+            color: red;
+        }
+        .date.set {
+            color: blue;
+        }
+        .detail {
+            width: 100%;
+        }
+        .price {
+            flex-shrink: 0;
+            padding-right: 10px;
+        }
+    }
+    li.hidden-date {
+        .date {
+            color: #fff;
+        }
+    }
+}
+
 .basic {
     color: #000;
 }
 .good1 {
-    color: #00c2a0;
+    color: #009086;
 }
 .good2 {
     color: #0CCF43;
@@ -81,7 +176,7 @@ header {
     color: #000;
 }
 .fit2 {
-    color: #0CCF43;
+    color: #FF4C97;
 }
 
 
